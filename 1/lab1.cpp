@@ -1,10 +1,11 @@
 #include <omp.h>
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
-#define HEIGHT 10000
-#define WIDTH 10000
+#define HEIGHT 1000
+#define WIDTH 1000
 
 double** alloc(int sizeX, int sizeY) {
 	double **p = new double*[sizeX];
@@ -23,39 +24,40 @@ void deAlloc(double** p, int sizeX) {
 	delete[] p;
 }
 
+double doSth(int i, int j){
+	return (sin(((double)i)*0.01)+cos(((double)j)/0.01) + 0.1)*0.14;
+}
+
 int main()
 {
 	double** p;
 	int i = 0, j = 0;
 	double start, stop;
 
-	// series
 	p = alloc(HEIGHT, WIDTH);
-
+	
+	// series
 	start = omp_get_wtime();
 
 	for (i = 0; i<HEIGHT; i++)
 		for (j = 0; j<WIDTH; j++)
-			p[i][j] = (((double)i) * 100) / 0.01;
+			p[i][j] = doSth(i, j);
 
 	stop = omp_get_wtime();
-
-	deAlloc(p, HEIGHT);
 
 	cout << "Time for series: " << stop - start<<endl;
 
 	// parallel
-	p = alloc(HEIGHT, WIDTH);
-
 	start = omp_get_wtime();
 
 	#pragma omp parallel for
 		for (i = 0; i<HEIGHT; i++)
 			for (j = 0; j<WIDTH; j++)
-				p[i][j] = (((double)i) * 100) / 0.01;
+				p[i][j] = doSth(i, j);
 
 	stop = omp_get_wtime();
-	deAlloc(p, HEIGHT);
 	cout << "Time for parallel: " << stop - start<<endl;
+	
+	deAlloc(p, HEIGHT);
 	return 0;
 }
