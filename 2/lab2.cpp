@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int main()
+int main(String x[])
 {
 	double start,stop;
 	// create 2 objects
