@@ -28,6 +28,8 @@ public:
 	Matrix* sub(Matrix);// odejmowanie macierzy
 	Matrix* multiplicate(Matrix); // mnozenie macierzy
 	Matrix* multiplicateParallel(Matrix); // mnozenie macierzy
+	Matrix* Strassen(Matrix);
+	Matrix* StrassenParallel(Matrix);
 private:
 	int width, height;
 	vector < vector < double > >  matrix;

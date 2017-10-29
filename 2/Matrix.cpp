@@ -149,6 +149,19 @@ Matrix* Matrix::multiplicateParallel(Matrix second)
 	return(newMatrix);
 }
 
+Matrix* Matrix::Strassen(Matrix second)
+{
+	Matrix *newMatrix = new Matrix(height, second.width);
+	areEqual(second);
+	
+}
+
+Matrix* Matrix::StrassenParallel(Matrix second)
+{
+	Matrix *newMatrix = new Matrix(height, second.width);
+	areEqual(second);
+}
+
 
 void Matrix::areEqual(Matrix second) throw(string)
 {
