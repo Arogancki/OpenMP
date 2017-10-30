@@ -30,7 +30,6 @@ public:
 	Matrix* multiplicateParallel(Matrix); // mnozenie macierzy
 	Matrix* Strassen(Matrix);
 	Matrix* StrassenParallel(Matrix);
-private:
 	int width, height;
 	vector < vector < double > >  matrix;
 	void areEqual(Matrix) throw(string);
