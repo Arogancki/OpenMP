@@ -176,7 +176,11 @@ void StrassenMatrix_Multiply(Matrix *X, Matrix *Y, Matrix *Z) {
      for(int i=0; i<2; i++) {
         for(int j=0; j<2; j++) { 
            for(int t=0; t<2; t++) {
-			   Z->addToCell(i+1, j+1, X->matrix[i][t] * Y->matrix[t][j]);
+			   if (t == 0){
+					Z->setCell(i+1, j+1, X->matrix[i][t] * Y->matrix[t][j]);
+			   }
+			   else
+				    Z->addToCell(i+1, j+1, X->matrix[i][t] * Y->matrix[t][j]);
            }  
         }        
      }
@@ -205,42 +209,47 @@ void StrassenMatrix_MultiplyParallel(Matrix *X, Matrix *Y, Matrix *Z) {
      for(int i=0; i<2; i++) {
         for(int j=0; j<2; j++) { 
            for(int t=0; t<2; t++) {
-			   Z->addToCell(i+1, j+1, X->matrix[i][t] * Y->matrix[t][j]);
+			   if (t == 0){
+					Z->setCell(i+1, j+1, X->matrix[i][t] * Y->matrix[t][j]);
+			   }
+			   else
+				    Z->addToCell(i+1, j+1, X->matrix[i][t] * Y->matrix[t][j]);
            }  
         }        
      }
 }
 
 void StrassenX(int n, Matrix *A, Matrix *B, Matrix *C) {
-	Matrix *A11 = new Matrix(A->height, A->width);
-	Matrix *A12 = new Matrix(A->height, A->width);
-	Matrix *A21 = new Matrix(A->height, A->width);
-	Matrix *A22 = new Matrix(A->height, A->width);
-	
-	Matrix *B11 = new Matrix(A->height, A->width);
-	Matrix *B12 =new Matrix(A->height, A->width);
-	Matrix *B21 = new Matrix(A->height, A->width);
-	Matrix *B22 = new Matrix(A->height, A->width);
-	
-	Matrix *C11 = new Matrix(A->height, A->width);
-	Matrix *C12 = new Matrix(A->height, A->width);
-	Matrix *C21 = new Matrix(A->height, A->width);
-	Matrix *C22 = new Matrix(A->height, A->width);
-	
-	Matrix *M1 = new Matrix(A->height, A->width);
-	Matrix *M2 = new Matrix(A->height, A->width);
-	Matrix *M3 = new Matrix(A->height, A->width);
-	Matrix *M4 = new Matrix(A->height, A->width);
-	Matrix *M5 = new Matrix(A->height, A->width);
-	Matrix *M6 = new Matrix(A->height, A->width);
-	Matrix *M7 = new Matrix(A->height, A->width);
-	
-	Matrix *AA = new Matrix(A->height, A->width);
-	Matrix *BB = new Matrix(A->height, A->width);
-	
 	if (n == 2){
 		StrassenMatrix_Multiply(A, B, C);
 	} else {
+		
+		Matrix *A11 = new Matrix(A->height, A->width);
+		Matrix *A12 = new Matrix(A->height, A->width);
+		Matrix *A21 = new Matrix(A->height, A->width);
+		Matrix *A22 = new Matrix(A->height, A->width);
+		
+		Matrix *B11 = new Matrix(A->height, A->width);
+		Matrix *B12 =new Matrix(A->height, A->width);
+		Matrix *B21 = new Matrix(A->height, A->width);
+		Matrix *B22 = new Matrix(A->height, A->width);
+		
+		Matrix *C11 = new Matrix(A->height, A->width);
+		Matrix *C12 = new Matrix(A->height, A->width);
+		Matrix *C21 = new Matrix(A->height, A->width);
+		Matrix *C22 = new Matrix(A->height, A->width);
+		
+		Matrix *M1 = new Matrix(A->height, A->width);
+		Matrix *M2 = new Matrix(A->height, A->width);
+		Matrix *M3 = new Matrix(A->height, A->width);
+		Matrix *M4 = new Matrix(A->height, A->width);
+		Matrix *M5 = new Matrix(A->height, A->width);
+		Matrix *M6 = new Matrix(A->height, A->width);
+		Matrix *M7 = new Matrix(A->height, A->width);
+		
+		Matrix *AA = new Matrix(A->height, A->width);
+		Matrix *BB = new Matrix(A->height, A->width);
+		
 		for(int i=0; i<n/2; i++) {
            for(int j=0; j<n/2; j++) {
 			  A11->setCell(i+1,j+1, A->matrix[i][j]);
@@ -316,35 +325,38 @@ void StrassenX(int n, Matrix *A, Matrix *B, Matrix *C) {
 }
 
 void StrassenXParallel(int n, Matrix *A, Matrix *B, Matrix *C) {
-	Matrix *A11 = new Matrix(A->height, A->width);
-	Matrix *A12 = new Matrix(A->height, A->width);
-	Matrix *A21 = new Matrix(A->height, A->width);
-	Matrix *A22 = new Matrix(A->height, A->width);
-	
-	Matrix *B11 = new Matrix(A->height, A->width);
-	Matrix *B12 =new Matrix(A->height, A->width);
-	Matrix *B21 = new Matrix(A->height, A->width);
-	Matrix *B22 = new Matrix(A->height, A->width);
-	
-	Matrix *C11 = new Matrix(A->height, A->width);
-	Matrix *C12 = new Matrix(A->height, A->width);
-	Matrix *C21 = new Matrix(A->height, A->width);
-	Matrix *C22 = new Matrix(A->height, A->width);
-	
-	Matrix *M1 = new Matrix(A->height, A->width);
-	Matrix *M2 = new Matrix(A->height, A->width);
-	Matrix *M3 = new Matrix(A->height, A->width);
-	Matrix *M4 = new Matrix(A->height, A->width);
-	Matrix *M5 = new Matrix(A->height, A->width);
-	Matrix *M6 = new Matrix(A->height, A->width);
-	Matrix *M7 = new Matrix(A->height, A->width);
-	
-	Matrix *AA = new Matrix(A->height, A->width);
-	Matrix *BB = new Matrix(A->height, A->width);
-	
+		
 	if (n == 2){
 		StrassenMatrix_MultiplyParallel(A, B, C);
 	} else {
+		
+		Matrix *A11 = new Matrix(A->height, A->width);
+		Matrix *A12 = new Matrix(A->height, A->width);
+		Matrix *A21 = new Matrix(A->height, A->width);
+		Matrix *A22 = new Matrix(A->height, A->width);
+		
+		Matrix *B11 = new Matrix(A->height, A->width);
+		Matrix *B12 =new Matrix(A->height, A->width);
+		Matrix *B21 = new Matrix(A->height, A->width);
+		Matrix *B22 = new Matrix(A->height, A->width);
+		
+		Matrix *C11 = new Matrix(A->height, A->width);
+		Matrix *C12 = new Matrix(A->height, A->width);
+		Matrix *C21 = new Matrix(A->height, A->width);
+		Matrix *C22 = new Matrix(A->height, A->width);
+		
+		Matrix *M1 = new Matrix(A->height, A->width);
+		Matrix *M2 = new Matrix(A->height, A->width);
+		Matrix *M3 = new Matrix(A->height, A->width);
+		Matrix *M4 = new Matrix(A->height, A->width);
+		Matrix *M5 = new Matrix(A->height, A->width);
+		Matrix *M6 = new Matrix(A->height, A->width);
+		Matrix *M7 = new Matrix(A->height, A->width);
+		
+		Matrix *AA = new Matrix(A->height, A->width);
+		Matrix *BB = new Matrix(A->height, A->width);
+		
+		#pragma omp parallel for collapse(2)
 		for(int i=0; i<n/2; i++) {
            for(int j=0; j<n/2; j++) {
 			  A11->setCell(i+1,j+1, A->matrix[i][j]);
@@ -407,6 +419,7 @@ void StrassenXParallel(int n, Matrix *A, Matrix *B, Matrix *C) {
         StrassenMatrix_AddParallel(n/2, AA, BB, C22);
         
         //Set the result to C[][N]
+		#pragma omp parallel for collapse(2)
         for(int i=0; i<n/2; i++) {
            for(int j=0; j<n/2; j++) {
 			  C->setCell(i+1,j+1, C11->matrix[i][j]);
