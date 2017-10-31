@@ -1,8 +1,12 @@
+
 #include <stdio.h>
 #include <tchar.h>
 #include <vector>
 #include <iostream>
 #include <sstream> 
+#include <list>
+#include <deque>
+#include <array>
 
 using namespace std;
 
@@ -31,6 +35,6 @@ public:
 	Matrix* Strassen(Matrix);
 	Matrix* StrassenParallel(Matrix);
 	int width, height;
-	vector < vector < double > >  matrix;
+	double** matrix;
 	void areEqual(Matrix) throw(string);
 };

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Matrix.h"
 #include <iostream>
 #include <sstream> 
@@ -5,6 +6,9 @@
 #include <ctime>
 #include <vector>
 #include <cstdlib>
+#include <list>
+#include <deque>
+#include <array>
 
 using namespace std;
 
@@ -14,16 +18,21 @@ Matrix::Matrix(int height = 0, int width = 0)
 {
 	this->width = width;
 	this->height = height;
-	vector < double > temp;
-	for (int count = 0; count < height; count++)
-		temp.push_back(0);
-	for (int count = 0; count < width; count++)
-		matrix.push_back(temp);
+	matrix = new double*[height];
+	for(int i = 0; i < height; i++) {
+		matrix[i] = new double[width];
+		for (int j=0; j<width; j++){
+			matrix[i][j] = 0.0f;
+		}
+	}
 }
 
 Matrix::~Matrix()
 {
-	matrix.clear();
+	for(int i = 0; i < width; ++i) {
+		delete [] matrix[i];
+	}
+	delete [] matrix;
 }
 
 void Matrix::setCell(int height, int width, double newValue)
@@ -33,7 +42,7 @@ void Matrix::setCell(int height, int width, double newValue)
 }
 
 void Matrix::randomizeCells(){
-	this->randomizeCells(0.01d, 1000.0d);
+	this->randomizeCells(0.01, 1000.0);
 }
 
 void Matrix::randomizeCells(double fMin, double fMax){
@@ -134,24 +143,27 @@ void Matrix::addToCell(int x, int y, double num){
 
 Matrix* Matrix::multiplicate(Matrix second)
 {
-	Matrix *newMatrix = new Matrix(height, second.width);
-	areEqual(second);
+	Matrix *newMatrix = new Matrix(height, width);
+	
+	//normal workflow
 	for (int count = 0; count < height; count++)
 		for (int count2 = 0; count2 < second.width; count2++)
-			for (int count3 = 0; count3 < width; count3++)
-				newMatrix->addToCell(count + 1, count2 + 1, this->matrix[count][count3] * second.matrix[count3][count2]);
+			for (int count3 = 0; count3 < width; count3++){
+				newMatrix->addToCell(count2 + 1, count + 1, this->matrix[count2][count3] * second.matrix[count3][count]);
+			}
 	return(newMatrix);
 }
 
 Matrix* Matrix::multiplicateParallel(Matrix second)
 {
 	Matrix *newMatrix = new Matrix(height, second.width);
-	areEqual(second);
+	
+	//normal workflow
 	#pragma omp parallel for collapse(3)
 	for (int count = 0; count < height; count++)
 		for (int count2 = 0; count2 < second.width; count2++)
 			for (int count3 = 0; count3 < width; count3++)
-				newMatrix->addToCell(count + 1, count2 + 1, this->matrix[count][count3] * second.matrix[count3][count2]);
+				newMatrix->addToCell(count2 + 1, count + 1, this->matrix[count2][count3] * second.matrix[count3][count]);
 	return(newMatrix);
 }
 
@@ -220,7 +232,7 @@ void StrassenMatrix_MultiplyParallel(Matrix *X, Matrix *Y, Matrix *Z) {
 }
 
 void StrassenX(int n, Matrix *A, Matrix *B, Matrix *C) {
-	if (n == 2){
+	if (n <= 2){
 		StrassenMatrix_Multiply(A, B, C);
 	} else {
 		
@@ -326,7 +338,7 @@ void StrassenX(int n, Matrix *A, Matrix *B, Matrix *C) {
 
 void StrassenXParallel(int n, Matrix *A, Matrix *B, Matrix *C) {
 		
-	if (n == 2){
+	if (n <= 2){
 		StrassenMatrix_MultiplyParallel(A, B, C);
 	} else {
 		

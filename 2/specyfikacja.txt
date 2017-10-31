@@ -1,0 +1,15 @@
+
+
+Win 7 
+
+16.gb
+
+64bit
+Intel(R) Core(TM) i7-7700K CPU 4.20 GHz
+
+DeviceID  NumberOfCores  NumberOfLogicalProcessors
+CPU0      4              8
+
+kompilator g++ z flaga optymalizacji o4
+
+kazdy test 20 razy a wynik to srenida

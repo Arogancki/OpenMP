@@ -3,8 +3,8 @@
 #include  "Matrix.h"
 #include <fstream>
 
-#define WIDTH 1000
-#define HEIGHT 1000
+#define WIDTH 250
+#define HEIGHT 250
 
 using namespace std;
 
