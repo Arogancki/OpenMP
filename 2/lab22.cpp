@@ -4,8 +4,8 @@
 #include  "Matrix.h"
 #include <fstream>
 
-#define WIDTH 4
-#define HEIGHT 4
+#define WIDTH 5
+#define HEIGHT 5
 
 #define t 10
 
@@ -26,7 +26,6 @@ int main(int argc,  char** argv)
 	temp = 0.0000;
 	
 	for (int i=0; i<t;i++){
-		cout<<"i";
 		start = omp_get_wtime();
 		(matrix1.multiplicate(matrix2));
 	stop = omp_get_wtime();
@@ -57,6 +56,6 @@ int main(int argc,  char** argv)
 	
 	outFile.flush();
 	outFile.close();
-	
+	results << ",iterative\n";
 	return 0;
 }

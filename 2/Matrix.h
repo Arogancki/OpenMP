@@ -23,6 +23,7 @@ public:
 	void randomizeCell(int,int,double,double);
 	void randomizeCells(double,double);
 	void randomizeCells(int,int,double,double);
+	double getMatrix(int, int);
 	string getCell(int, int);
 	string getRow(int);
 	string getColumn(int);
@@ -35,6 +36,6 @@ public:
 	Matrix* Strassen(Matrix);
 	Matrix* StrassenParallel(Matrix);
 	int width, height;
-	double** matrix;
+	vector <vector<double>>matrix;
 	void areEqual(Matrix) throw(string);
 };

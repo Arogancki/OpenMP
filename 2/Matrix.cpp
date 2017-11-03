@@ -18,21 +18,16 @@ Matrix::Matrix(int height = 0, int width = 0)
 {
 	this->width = width;
 	this->height = height;
-	matrix = new double*[height];
-	for(int i = 0; i < height; i++) {
-		matrix[i] = new double[width];
-		for (int j=0; j<width; j++){
-			matrix[i][j] = 0.0f;
-		}
-	}
+	vector<double> temp;
+	for (int i = 0; i < width; i++)
+		temp.push_back(0.0);
+	for (int i = 0; i < height; i++)
+		matrix.push_back(temp);
 }
 
 Matrix::~Matrix()
 {
-	for(int i = 0; i < width; ++i) {
-		delete [] matrix[i];
-	}
-	delete [] matrix;
+	
 }
 
 void Matrix::setCell(int height, int width, double newValue)
@@ -132,7 +127,7 @@ Matrix* Matrix::sub(Matrix second)
 	Matrix *newmatrix = new Matrix(width, height);
 	for (int count = 0; count < width; count++)
 		for (int count2 = 0; count2 < height; count2++)
-			newmatrix->setCell(count + 1, count2 + 1, matrix[count2][count] - second.matrix[count2][count]);
+			newmatrix->setCell(count2 + 1, count + 1, matrix[count][count2] - second.matrix[count][count2]);
 	return(newmatrix);
 }
 
@@ -149,9 +144,18 @@ Matrix* Matrix::multiplicate(Matrix second)
 	for (int count = 0; count < height; count++)
 		for (int count2 = 0; count2 < second.width; count2++)
 			for (int count3 = 0; count3 < width; count3++){
-				newMatrix->addToCell(count2 + 1, count + 1, this->matrix[count2][count3] * second.matrix[count3][count]);
+				newMatrix->addToCell(count + 1, count2 + 1, this->getMatrix(count,count3) * second.getMatrix(count3,count2));
 			}
 	return(newMatrix);
+}
+
+double Matrix::getMatrix(int x, int y){
+	try {
+		return matrix[x][y];
+	}
+	catch (char *e) {
+		return 0;
+	}
 }
 
 Matrix* Matrix::multiplicateParallel(Matrix second)
@@ -163,7 +167,7 @@ Matrix* Matrix::multiplicateParallel(Matrix second)
 	for (int count = 0; count < height; count++)
 		for (int count2 = 0; count2 < second.width; count2++)
 			for (int count3 = 0; count3 < width; count3++)
-				newMatrix->addToCell(count2 + 1, count + 1, this->matrix[count2][count3] * second.matrix[count3][count]);
+				newMatrix->addToCell(count2 + 1, count + 1, this->getMatrix(count2, count3) * second.getMatrix(count3, count));
 	return(newMatrix);
 }
 
