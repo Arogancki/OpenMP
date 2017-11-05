@@ -4,8 +4,8 @@
 
 using namespace std;
 
-#define HEIGHT 1000
-#define WIDTH 1000
+#define HEIGHT 2500
+#define WIDTH 2500
 
 double** alloc(int sizeX, int sizeY) {
 	double **p = new double*[sizeX];
@@ -47,16 +47,18 @@ int main()
 
 	cout << "Time for series: " << stop - start<<endl;
 
+	for(int k=2; k<9; k++){
 	// parallel
+	omp_set_dynamic(0); 
+	omp_set_num_threads(k);
 	start = omp_get_wtime();
-
 	#pragma omp parallel for
 		for (i = 0; i<HEIGHT; i++)
 			for (j = 0; j<WIDTH; j++)
 				p[i][j] = doSth(i, j);
-
 	stop = omp_get_wtime();
-	cout << "Time for parallel: " << stop - start<<endl;
+	cout << "Time for parallel: "<<k<< " "<< stop - start<<endl;
+}
 	
 	deAlloc(p, HEIGHT);
 	return 0;

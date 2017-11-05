@@ -1,12 +1,8 @@
 
 #include <stdio.h>
-#include <tchar.h>
 #include <vector>
 #include <iostream>
 #include <sstream> 
-#include <list>
-#include <deque>
-#include <array>
 
 using namespace std;
 
@@ -33,9 +29,11 @@ public:
 	Matrix* sub(Matrix);// odejmowanie macierzy
 	Matrix* multiplicate(Matrix); // mnozenie macierzy
 	Matrix* multiplicateParallel(Matrix); // mnozenie macierzy
+	Matrix* multiplicateDiff(Matrix); // mnozenie macierzy
+	Matrix* multiplicateParallelDiff(Matrix); // mnozenie macierzy
 	Matrix* Strassen(Matrix);
 	Matrix* StrassenParallel(Matrix);
 	int width, height;
-	vector <vector<double>>matrix;
+	vector < vector < double > > matrix;
 	void areEqual(Matrix) throw(string);
 };

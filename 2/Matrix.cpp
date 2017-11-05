@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <omp.h>
 #include "Matrix.h"
 #include <iostream>
 #include <sstream> 
@@ -6,9 +6,6 @@
 #include <ctime>
 #include <vector>
 #include <cstdlib>
-#include <list>
-#include <deque>
-#include <array>
 
 using namespace std;
 
@@ -144,7 +141,20 @@ Matrix* Matrix::multiplicate(Matrix second)
 	for (int count = 0; count < height; count++)
 		for (int count2 = 0; count2 < second.width; count2++)
 			for (int count3 = 0; count3 < width; count3++){
-				newMatrix->addToCell(count + 1, count2 + 1, this->getMatrix(count,count3) * second.getMatrix(count3,count2));
+				newMatrix->matrix[count + 1][count2 + 1] += this->matrix[count][count3] * second.matrix[count3][count2];
+			}
+	return(newMatrix);
+}
+
+Matrix* Matrix::multiplicateDiff(Matrix second)
+{
+	Matrix *newMatrix = new Matrix(height, width);
+	
+	//normal workflow
+	for (int count = 0; count < height; count++)
+		for (int count2 = 0; count2 < second.width; count2++)
+			for (int count3 = 0; count3 < width; count3++){
+				newMatrix->matrix[count2 + 1][count + 1] += this->matrix[count2][count3] * second.matrix[count3][count];
 			}
 	return(newMatrix);
 }
@@ -167,7 +177,20 @@ Matrix* Matrix::multiplicateParallel(Matrix second)
 	for (int count = 0; count < height; count++)
 		for (int count2 = 0; count2 < second.width; count2++)
 			for (int count3 = 0; count3 < width; count3++)
-				newMatrix->addToCell(count2 + 1, count + 1, this->getMatrix(count2, count3) * second.getMatrix(count3, count));
+				newMatrix->matrix[count + 1][count2 + 1] += this->matrix[count][count3] * second.matrix[count3][count2];
+	return(newMatrix);
+}
+
+Matrix* Matrix::multiplicateParallelDiff(Matrix second)
+{
+	Matrix *newMatrix = new Matrix(height, second.width);
+	
+	//normal workflow
+	#pragma omp parallel for collapse(3)
+	for (int count = 0; count < height; count++)
+		for (int count2 = 0; count2 < second.width; count2++)
+			for (int count3 = 0; count3 < width; count3++)
+				newMatrix->matrix[count2 + 1][count + 1] += this->matrix[count2][count3] * second.matrix[count3][count];
 	return(newMatrix);
 }
 
