@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
-#include <thread>
 #include <vector>
+#include <omp.h>
 
 using namespace std;
 static unsigned char colors[1600][1600][3] = { { { 0 } } };
@@ -12,9 +12,19 @@ const int MaxColorComponentValue = 255;
 char *comment = "# ";
 int ilosc_watkow = 16;
 
-void draw()
+int threadColor[8][3] = {
+	{255, 0, 0},
+	{0, 255, 0},
+	{0, 0, 255},
+	{128, 128, 0},
+	{0, 128, 128},
+	{128, 0, 128,},
+	{32, 128, 32},
+	{64, 0, 128}
+};
+
+void draw(int threads)
 {
-	static unsigned char color[3];
 	/* screen ( integer) coordinate */
 	int iX, iY;
 	const int iXmax = iXmaxG;
@@ -61,12 +71,23 @@ void draw()
 
 	// najpier wypelnic kolorami szarosci zeby bylo tlo dobrze widoczne
 	// potem podzielic kolowy miedzy watki - stowrzyc jakams tablice czy cos 
+	
+	omp_set_dynamic(0);     // Explicitly disable dynamic teams
+	omp_set_num_threads(threads);
+	
+	#pragma omp parallel for 
 	for (iY = 0; iY<iYmaxG; iY++)
 	{
+		int threadID = omp_get_thread_num();
+	
 		Cy = CyMin + iY*PixelHeight;
 		if (fabs(Cy)< PixelHeight / 2) Cy = 0.0; /* Main antenna */
 		for (iX = 0; iX<iXmaxG; iX++)
 		{
+			colors[iY][iX][0] = 32 + (192 * ( ((double)threadID)  / 8 ) );
+			colors[iY][iX][1] = 32 + (192 * ( ((double)threadID) / 8 ) );
+			colors[iY][iX][2] = 32 + (192 * ( ((double)threadID) / 8 ) );
+			
 			Cx = CxMin + iX*PixelWidth;
 			/* initial value of orbit = critical point Z= 0 */
 			Zx = 0.0;
@@ -80,27 +101,15 @@ void draw()
 				Zx = Zx2 - Zy2 + Cx;
 				Zx2 = Zx*Zx;
 				Zy2 = Zy*Zy;
-			};
+			}
 			/* compute  pixel color (24 bit = 3 bytes) */
 			if (Iteration == IterationMax)
 			{ /*  interior of Mandelbrot set = black */
-				color[0] = 0;
-				color[1] = 0;
-				color[2] = 0;
+				colors[iY][iX][0] = threadColor[threadID%8][0];
+				colors[iY][iX][1]  = threadColor[threadID%8][1];
+				colors[iY][iX][2]  = threadColor[threadID%8][2];
 			}
-			else
-			{ /* exterior of Mandelbrot set = white */
-				color[0] = 255; /* Red*/
-				color[1] = 255;  /* Green */
-				color[2] = 255;/* Blue */
-			};
-			/*write color to the file*/
-			//fwrite(color,1,3,fp);
-			colors[iY][iX][0] = color[0];
-			colors[iY][iX][1] = color[1];
-			colors[iY][iX][2] = color[2];
 		}
-
 	}
 }
 
@@ -112,7 +121,7 @@ int main()
 
 	fprintf(fp, "P6\n %s\n %d\n %d\n %d\n", comment, iXmaxG, iYmaxG, MaxColorComponentValue);
 
-	draw();
+	draw(4);
 
 	for (int i = 0; i<iYmaxG; i++)
 		for (int j = 0; j<iXmaxG; j++)
