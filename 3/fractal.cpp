@@ -5,7 +5,7 @@
 
 #define THREADS 8
 
-static unsigned char colors[1600][1600][3] = { { { 0 } } };
+static unsigned char colors[1600][1600][3] = { { {  } } };
 const int iXmaxG = 1600;
 const int iYmaxG = 1600;
 
@@ -34,7 +34,6 @@ int main()
 	FILE * fp;
 	char *filename = "new.ppm";
 	fp = fopen(filename, "wb");
-
 	fprintf(fp, "P6\n %s\n %d\n %d\n %d\n", "# ", iXmaxG, iYmaxG, 255);
 
 	// zmienne algorytmu
@@ -70,14 +69,13 @@ int main()
 	omp_set_dynamic(0); // Explicitly disable dynamic teams
 	omp_set_num_threads(THREADS);
 	
+	double timeStamp = omp_get_wtime();
 	#pragma omp parallel for 
-	for (iY = 0; iY<iYmaxG; iY++)
-	{
+	for (iY = 0; iY<iYmaxG; iY++){
 		int threadID = omp_get_thread_num();
 		Cy = CyMin + iY*PixelHeight;
 		if (fabs(Cy)< PixelHeight / 2) Cy = 0.0;
-		for (iX = 0; iX<iXmaxG; iX++)
-		{
+		for (iX = 0; iX<iXmaxG; iX++){
 			colors[iY][iX][0] = 32 + (192 * ( ((double)threadID)  / THREADS ) );
 			colors[iY][iX][1] = 32 + (192 * ( ((double)threadID) / THREADS ) );
 			colors[iY][iX][2] = 32 + (192 * ( ((double)threadID) / THREADS ) );
@@ -88,26 +86,25 @@ int main()
 			Zx2 = Zx*Zx;
 			Zy2 = Zy*Zy;
 			
-			for (Iteration = 0; Iteration<IterationMax && ((Zx2 + Zy2)< ((double)4) ); Iteration++)
-			{
+			for (Iteration = 0; Iteration<IterationMax && ((Zx2 + Zy2)< ((double)4) ); Iteration++){
 				Zy = 2 * Zx*Zy + Cy;
 				Zx = Zx2 - Zy2 + Cx;
 				Zx2 = Zx*Zx;
 				Zy2 = Zy*Zy;
 			}
 			
-			if (Iteration == IterationMax)
-			{
+			if (Iteration == IterationMax){
 				colors[iY][iX][0] = threadColor[threadID % 16][0];
 				colors[iY][iX][1]  = threadColor[threadID % 16][1];
 				colors[iY][iX][2]  = threadColor[threadID % 16][2];
 			}
 		}
 	}
+	timeStamp = omp_get_wtime() - timeStamp;
 
 	for (int i = 0; i<iYmaxG; i++)
 		for (int j = 0; j<iXmaxG; j++)
 			fwrite(colors[i][j], 1, 3, fp);
 	fclose(fp);
-	std::cout << "Wyeksportowano do pliku " << filename << ".\n";
+	std::cout << "Time: " << timeStamp << "\nSaved in " << filename << "\n";
 }
