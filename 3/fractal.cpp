@@ -61,7 +61,7 @@ int main()
 	for (int i=0; i<TESTAMONTH; i++){
 		double timeStamp = omp_get_wtime();
 		
-		#pragma omp parallel for default(shared) private(iX, Iteration, Cx, Cy, Zx, Zy, Zx2, Zy2) schedule(auto)
+		#pragma omp parallel for default(shared) private(iX, Iteration, Cx, Cy, Zx, Zy, Zx2, Zy2) schedule(dynamic)
 		for (iY = 0; iY<iYmaxG; iY++){
 			int threadID = omp_get_thread_num();
 			Cy = CyMin + iY*PixelHeight;
