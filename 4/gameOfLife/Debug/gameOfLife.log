@@ -1,0 +1,4 @@
+﻿  main.cpp
+d:\it\wspolbiezne\4\gameoflife\main.cpp(7): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  gameOfLife.vcxproj -> D:\it\wspolbiezne\4\gameOfLife\Debug\gameOfLife.exe
+  gameOfLife.vcxproj -> D:\it\wspolbiezne\4\gameOfLife\Debug\gameOfLife.pdb (Full PDB)
