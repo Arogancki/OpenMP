@@ -62,6 +62,7 @@ bool GameOfLife::doStep(int number)
 	omp_set_dynamic(0); // Explicitly disable dynamic teams
 	omp_set_num_threads(this->numberOfThreads);
 
+	double timeStamp = omp_get_wtime();
 	for (int j = 0; j<number; j++)
 	{
 		if (cycle++ < maxCycles && maxCycles>0)
@@ -92,7 +93,7 @@ bool GameOfLife::doStep(int number)
 						else if (neiX >= width)	neiX = 0;
 						if (neiY < 0)	neiY = height - 1;
 						else if (neiY >= height)	neiY = 0;
-						if (fields[(neiY*height) + neiX].prev)
+						if (fields[(neiX*width) + neiY].prev)
 							sum++;
 					}
 				Classic(i, sum);
@@ -101,6 +102,7 @@ bool GameOfLife::doStep(int number)
 		else
 			break;
 	}
+	wholetime += omp_get_wtime() - timeStamp;
 	return _return;
 }
 
@@ -137,40 +139,26 @@ void GameOfLife::freeMemoryForPixels(int pixelOnPixel)
 
 void GameOfLife::updatePixels(int pixelOnPixel)
 {
-	uint8_t blackk[4] = { 0,0,0,1 };
-	uint8_t redd[4] = { 255,0,0,1 };
-	uint8_t bluee[4] = { 0,0,255,1 };
-	uint8_t greenn[4] = { 0,255,0,1 };
+	uint8_t bbb[4] = { 0,0,0,1 };
+	uint8_t white[4] = { 255,255,255,1 };
 
 	int l;
 	for (int i = 0; i < height; i++)
 	{
 		l = 0;
-		for (int j=0; j<width;j++)
+		for (int j = 0; j<width; j++)
 		{
-			if (fields[(width*i) + j].prev==black) 
+			if (fields[(width*i) + j].prev)
 				for (int k = 0; k < pixelOnPixel; k++)
 				{
 					for (int m = 0; m < 4; m++)
-						pixels[(i*pixelOnPixel)+l][(j*pixelOnPixel) +k ][m] = blackk[m];
+						pixels[(i*pixelOnPixel) + l][(j*pixelOnPixel) + k][m] = bbb[m];
 				}
-			if (fields[(width*i) + j].prev == red)
+			else
 				for (int k = 0; k < pixelOnPixel; k++)
 				{
 					for (int m = 0; m < 4; m++)
-						pixels[(i*pixelOnPixel) + l][(j*pixelOnPixel) + k][m] =redd[m];
-				}
-			if (fields[(width*i) + j].prev == green)
-				for (int k = 0; k < pixelOnPixel; k++)
-				{
-					for (int m = 0; m < 4; m++)
-						pixels[(i*pixelOnPixel) + l][(j*pixelOnPixel) + k][m] = greenn[m];
-				}
-			if (fields[(width*i) + j].prev == blue)
-				for (int k = 0; k < pixelOnPixel; k++)
-				{
-					for (int m = 0; m < 4; m++)
-						pixels[(i*pixelOnPixel) + l][(j*pixelOnPixel) + k][m] = bluee[m];
+						pixels[(i*pixelOnPixel) + l][(j*pixelOnPixel) + k][m] = white[m];
 				}
 		}
 		for (l = 1; l < pixelOnPixel; l++)
@@ -188,8 +176,8 @@ void GameOfLife::makeGif(char *name, int timeInterval, int pixelOnPixel)
 	do
 	{
 		updatePixels(pixelOnPixel);
-		for (int i = 0; i<height*pixelOnPixel; i++)
-			for (int j = 0; j<width*pixelOnPixel; j++)
+		for (int i = 0; i<width*pixelOnPixel; i++)
+			for (int j = 0; j<height*pixelOnPixel; j++)
 			{
 				for (int m = 0; m < 4; m++)
 					tab[i][j][m] = pixels[i][j][m];
@@ -198,7 +186,10 @@ void GameOfLife::makeGif(char *name, int timeInterval, int pixelOnPixel)
 		GifWriteFrame(&Gif, **tab, width*pixelOnPixel,height*pixelOnPixel, timeInterval, 8, 0);
 	} while (doStep());
 	GifEnd(&Gif);
+	system("\"Game Of Life 2.gif\" | exit");
 	freeMemoryForPixels(pixelOnPixel);
+	cout << this->wholetime <<std::endl;
+	system("pause");
 }
 
 void GameOfLife::reset()
@@ -272,12 +263,6 @@ void GameOfLife::changeStates(int who)
 
 GameOfLife::~GameOfLife()
 {
-	if (!threads.empty())
-	{
-		//for (int i = 0; i < threads.size(); i++)
-			//threads[i].thread->join();
-		threads.clear();
-	}
 	if (!fields.empty())
 			fields.clear();
 }

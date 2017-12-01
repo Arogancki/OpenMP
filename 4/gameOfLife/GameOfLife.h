@@ -1,11 +1,7 @@
 #pragma once
 #include <vector>
 #include <thread>
-#include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
-#include <stdlib.h>
 #include <iostream>
-#include <mutex>
 
 namespace std{
 	class mutex;
@@ -16,7 +12,7 @@ using std::cout;
 #define xxx 400
 #define yyy 400
 
-#define density 25// of procent
+#define density 40// of procent
 
 #define fre 0
 #define red 1
@@ -58,6 +54,7 @@ private:
 	//rulls
 	void Classic(int, int);
 	GifWriter Gif;
+	double wholetime = 0.0;
 	uint8_t ***pixels;
 	void realConstructor(int width, int height, int maxCycles, int numberOfThreads);
 	void reserveMemoryForPixels(int pixelOnPixel);

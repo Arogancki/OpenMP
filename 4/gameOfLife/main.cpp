@@ -3,13 +3,13 @@
 #include "stdafx.h"
 #include "GameOfLife.h"
 
-#define Nframe 500
+#define Nframe 40
 int timeInterval = (1000.0 / Nframe);
 
 int main()
 {
-	GameOfLife sample(500, 500, 2000, 8);
-	sample.makeGif("Game Of Life.gif", timeInterval, 8);	return 0;
+	GameOfLife sample(xxx/4, yyy/4, 200, 8);
+	sample.makeGif("Game Of Life 2.gif", timeInterval, 4); 	return 0;
 	do
 	{
 		system("cls");
