@@ -1,0 +1,1 @@
+g++ -lm -lgomp -fopenmp -O3 GameOfLife.h GameOfLife.cpp main.cpp
